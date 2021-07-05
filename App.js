@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet,TextInput, LogBox, Button} from 'react-native';
+import { View, Text, StyleSheet,TextInput, LogBox, Button,TouchableOpacity} from 'react-native';
 import firebase from './src/firebaseConnection';
 
 LogBox.ignoreAllLogs=true;
@@ -9,7 +9,8 @@ export default function App(){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  async function cadastrar(){
+
+  async function register(){
     await firebase.auth().createUserWithEmailAndPassword(email, password)
       .then((value) => {
         alert('Usuário criado: ' + value.user.email);
@@ -26,6 +27,20 @@ export default function App(){
           alert('Ops algo deu errado.')
           return;
         }
+      })
+      setEmail('');
+      setPassword('');
+  }
+
+  async function login(){
+    await firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((value) => {
+        alert('Bem vindo: ' + value.user.email);
+        return;
+      })
+      .catch((error) => {
+          alert('Ops algo deu errado.');
+          return;
       })
       setEmail('');
       setPassword('');
@@ -50,9 +65,19 @@ export default function App(){
       />
 
       <Button
-        title="Cadastrar"
-        onPress={cadastrar}
+        style={styles.container}
+        title="Entrar"
+        onPress={login}
       />
+
+      <TouchableOpacity style={styles.container}>
+          <Text 
+            style={{textAlign: 'center',fontSize:20,marginTop:20}}
+            onPress ={()=>register()}
+            >
+            Criar conta gratuita
+          </Text>
+        </TouchableOpacity>
     </View>
   );
 }
